@@ -5,22 +5,38 @@
     <title>Title</title>
 </head>
 <body>
-<h1>The XMLHttpRequest Object</h1>
+<h1>Enter name and score</h1>
+<label>
+    Name:
+    <input type="text" id="name"/>
+</label>
+</br>
+</br>
+<label>
+    Score:
+    <input type="number" id="score"/>
+</label>
+</br>
+</br>
 <div id="demo">
-    <button type="button" onclick="myFunc()">Change Content</button>
+    <button type="button" onclick="myFunc()">Upload to database</button>
 </div>
 <script>
     function myFunc() {
         const xhttp = new XMLHttpRequest();
-        const name = "John";
-        const score = 93;
-        xhttp.open("GET", "http://localhost:7000/?name=" + name + "&score=" + score);
-        xhttp.send();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("demo").innerHTML = this.responseText;
-            }
-        };
+        const name = document.getElementById("name").value;
+        const score = parseInt(document.getElementById("score").value);
+        if (Number.isInteger(score)) {
+            xhttp.open("GET", "http://localhost:7000/?name=" + name + "&score=" + score);
+            xhttp.send();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("demo").innerHTML = this.responseText;
+                }
+            };
+        } else {
+            document.getElementById("demo").innerHTML = "Error: Score input has to be a number!";
+        }
     }
 </script>
 

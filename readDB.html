@@ -6,5 +6,20 @@
 </head>
 <body>
 
+<button type="button" onclick="myFunc()">Get values</button>
+<div id="get-database"></div>
 </body>
+<script>
+    function myFunc() {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "http://localhost:7001/");
+        xhttp.send();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                document.getElementById("get-database").innerHTML = this.responseText;
+            }
+        };
+    }
+</script>
 </html>
