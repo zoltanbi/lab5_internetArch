@@ -18,7 +18,7 @@ http.createServer(function (req, res) {
         "Access-Control-Allow-Origin": "*"
     });
 
-    let numberOfEntries;
+    let databaseEntries = '<table> <tr><th>ID:</th><th>Name:</th><th>Score:</th></tr>'
 
     //Connect to MySQL to run SQL query
     db.connect(function(err) {
@@ -27,24 +27,21 @@ http.createServer(function (req, res) {
             return;
         }
         console.log("Connected!");
-        let numberOfEntriesSQL = "SELECT COUNT(id) FROM name_score";
-        db.query(numberOfEntriesSQL, function (err, result) {
+
+        const sql = "SELECT * FROM name_score";
+        db.query(sql, function (err, result) {
             if (err) throw err;
             console.log("record retrieval in progress");
-            numberOfEntries = (parseInt(Number(Object.values(JSON.parse(JSON.stringify(result[0])))).toString()));
-            console.log(numberOfEntries)
+            console.log(result)
+            for (let i = 0; i < result.length; i++) {
+                let temp = (Object.values(JSON.parse(JSON.stringify(result[i]))));
+                databaseEntries += ("<tr><td>" + temp[0] + "</td><td>" + temp[1] + "</td><td>" + temp[2] + "</td></tr>")
+            }
+            databaseEntries += "</table>"
             console.log("record retrieval complete");
+            res.end(databaseEntries)
 
         });
-        console.log("Startign for loop")
-        for (let i = 1; i <= numberOfEntries; i++) {
-            let getNameSQL = "SELECT name FROM name_score WHERE id=" + i;
-            let getScoreSQL = "SELECT score FROM name_score WHERE id=" + i;
-            db.query(getNameSQL, function (err, result) {
-                if (err) throw err;
-                console.log((Object.values(JSON.parse(JSON.stringify(result[0])))).toString())
-            })
-        }
         db.end();
     });
 
@@ -52,11 +49,4 @@ http.createServer(function (req, res) {
 }).listen(7001);
 
 
-// DECLARE @Counter INT
-// SET @Counter=1
-// WHILE( @Counter <= (SELECT COUNT(id) FROM name_score))
-// BEGIN
-// SELECT name FROM name_score WHERE id=@Counter
-// SELECT score FROM name_score WHERE id=@Counter
-// END
 
